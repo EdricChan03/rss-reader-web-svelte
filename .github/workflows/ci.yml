@@ -1,0 +1,78 @@
+name: Continuous Integration
+
+on:
+  - push
+  - pull_request
+  - workflow_dispatch
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run lint script
+        run: pnpm lint
+
+  unit-test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps
+      - name: Run unit tests
+        run: pnpm test:unit
+
+  integration-test:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Setup Node.js LTS
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.node-version'
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Install Playwright
+        run: pnpm exec playwright install --with-deps
+      - name: Run integration tests
+        run: pnpm test:integration
